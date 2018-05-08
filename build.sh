@@ -13,16 +13,8 @@ docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 docker info
 echo "docker login done"
 
-docker build --rm=false -t "21zoo/redis_exporter:$CIRCLE_TAG" .
-docker build --rm=false -t "21zoo/redis_exporter:latest" .
-
-docker push "21zoo/redis_exporter:latest"
-docker push "21zoo/redis_exporter:$CIRCLE_TAG"
-
-docker build --rm=false -t "oliver006/redis_exporter:$CIRCLE_TAG" .
-docker build --rm=false -t "oliver006/redis_exporter:latest" .
+docker build --rm=false -t "dhiaayachi/redis_exporter:latest" .
 docker push "oliver006/redis_exporter:latest"
-docker push "oliver006/redis_exporter:$CIRCLE_TAG"
 
 
 
@@ -40,6 +32,6 @@ gox -rebuild --osarch="windows/amd64" -ldflags "$GO_LDFLAGS" -output "dist/redis
 gox -rebuild --osarch="windows/386"   -ldflags "$GO_LDFLAGS" -output "dist/redis_exporter" && cd dist && zip -9    redis_exporter-$CIRCLE_TAG.windows-386.zip     redis_exporter.exe && rm redis_exporter.exe && cd ..
 
 echo "Upload to Github"
-ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG dist/
+#ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG dist/
 
 echo "Done"

@@ -5,8 +5,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-
-	"github.com/oliver006/redis_exporter/exporter"
+	"redis_exporter/exporter"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"

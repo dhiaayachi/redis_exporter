@@ -24,6 +24,7 @@ type RedisHost struct {
 
 type dbKeyPair struct {
 	db, key string
+	full bool
 }
 
 // Exporter implements the prometheus.Exporter interface, and exports Redis metrics.
@@ -219,6 +220,7 @@ func NewRedisExporter(host RedisHost, namespace, checkKeys string) (*Exporter, e
 		var err error
 		db := "0"
 		key := ""
+		full := true
 		frags := strings.Split(k, "=")
 		switch len(frags) {
 		case 1:
@@ -227,6 +229,14 @@ func NewRedisExporter(host RedisHost, namespace, checkKeys string) (*Exporter, e
 		case 2:
 			db = strings.Replace(strings.TrimSpace(frags[0]), "db", "", -1)
 			key, err = url.QueryUnescape(strings.TrimSpace(frags[1]))
+		case 3:
+			fullString := ""
+			db = strings.Replace(strings.TrimSpace(frags[0]), "db", "", -1)
+			key, err = url.QueryUnescape(strings.TrimSpace(frags[1]))
+			fullString, err = url.QueryUnescape(strings.TrimSpace(frags[2]))
+			if strings.ToLower(fullString) != "full"{
+				full = false
+			}
 		default:
 			err = fmt.Errorf("")
 		}
@@ -235,7 +245,7 @@ func NewRedisExporter(host RedisHost, namespace, checkKeys string) (*Exporter, e
 			continue
 		}
 		if key != "" {
-			e.keys = append(e.keys, dbKeyPair{db, key})
+			e.keys = append(e.keys, dbKeyPair{db, key, full})
 		}
 	}
 
@@ -682,9 +692,12 @@ func (e *Exporter) scrapeRedisHost(scrapes chan<- scrapeResult, addr string, idx
 		for _, key := range obtainedKeys {
 			dbLabel := "db" + k.db
 			keyLabel := key
-			if tempVal, err := doRedisCmd(c, "GET", key); err == nil && tempVal != nil {
-				if val, err := strconv.ParseFloat(fmt.Sprintf("%s", tempVal), 64); err == nil {
-					e.keyValues.WithLabelValues(addr, e.redis.Aliases[idx], dbLabel, keyLabel).Set(val)
+			if k.full {
+				if tempVal, err := doRedisCmd(c, "GET", key); err == nil && tempVal != nil {
+					if val, err := strconv.ParseFloat(fmt.Sprintf("%s", tempVal), 64); err == nil {
+						e.keyValues.WithLabelValues(addr, e.redis.Aliases[idx], dbLabel, keyLabel).Set(val)
+					}
+					log.Debugf("Getting queue results: %s", tempVal)
 				}
 			}
 
