@@ -24,7 +24,7 @@ type RedisHost struct {
 
 type dbKeyPair struct {
 	db, key string
-	full bool
+	full    bool
 }
 
 // Exporter implements the prometheus.Exporter interface, and exports Redis metrics.
@@ -234,7 +234,7 @@ func NewRedisExporter(host RedisHost, namespace, checkKeys string) (*Exporter, e
 			db = strings.Replace(strings.TrimSpace(frags[0]), "db", "", -1)
 			key, err = url.QueryUnescape(strings.TrimSpace(frags[1]))
 			fullString, err = url.QueryUnescape(strings.TrimSpace(frags[2]))
-			if strings.ToLower(fullString) != "full"{
+			if strings.ToLower(fullString) != "full" {
 				full = false
 			}
 		default:

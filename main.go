@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"net/http"
-	"os"
-	"runtime"
-	"redis_exporter/exporter"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
+	"net/http"
+	"os"
+	"redis_exporter/exporter"
+	"runtime"
 )
 
 var (
