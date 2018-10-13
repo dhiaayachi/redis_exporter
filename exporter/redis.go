@@ -687,6 +687,8 @@ func (e *Exporter) scrapeRedisHost(scrapes chan<- scrapeResult, addr string, idx
 				log.Debugf("Append result: %s", tempKey)
 				obtainedKeys = append(obtainedKeys, tempKey)
 			}
+		} else {
+			e.keySizes.WithLabelValues(addr, e.redis.Aliases[idx], "db"+k.db, k.key).Set(float64(0.0))
 		}
 
 		for _, key := range obtainedKeys {
