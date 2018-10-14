@@ -780,7 +780,7 @@ func TestKeysReset(t *testing.T) {
 
 	body = downloadUrl(t, ts.URL+"/metrics")
 
-	if bytes.Contains(body, []byte(keys[0])) {
+	if !bytes.Contains(body, []byte(keys[0])) {
 		t.Errorf("Metric is present in metrics list %q\n%s", keys[0], body)
 	}
 }
